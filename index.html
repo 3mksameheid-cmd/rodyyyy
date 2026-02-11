@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Rodina My Love ❤️</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=Dancing+Script:wght@700&display=swap');
+
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:#05000a; color:#fff; font-family:'Cairo', sans-serif; overflow:hidden; height:100vh; width:100vw; perspective:1000px; cursor:pointer; }
+
+#starField { position:fixed; top:0; left:0; width:100%; height:100%; z-index:-1; }
+
+/* قلب ترحيبي */
+#introOverlay {
+    position:fixed; inset:0; display:flex; align-items:center; justify-content:center;
+    z-index:9999; background:#05000a; pointer-events:none;
+}
+.intro-heart {
+    color:#ff2d75; font-size:250px; position:relative;
+    filter:drop-shadow(0 0 40px #ff2d75);
+    animation:heartGrow 3s forwards;
+}
+.intro-heart span {
+    position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+    font-family:'Dancing Script',cursive; font-size:45px; color:#fff; text-shadow:0 0 10px #000;
+}
+@keyframes heartGrow {
+    0% { transform:scale(0); opacity:0; }
+    50% { transform:scale(1.2); opacity:1; }
+    100% { transform:scale(2.5); opacity:0; }
+}
+
+/* شاشة الدخول */
+.screen { position:fixed; inset:0; display:flex; align-items:center; justify-content:center; flex-direction:column; z-index:10; padding:20px; transition:0.8s; }
+.glass-card {
+    background:rgba(255,255,255,0.05); backdrop-filter:blur(10px);
+    border:1px solid rgba(255,255,255,0.1); padding:30px; border-radius:25px;
+    text-align:center; width:100%; max-width:320px;
+}
+
+input { padding:12px; border-radius:50px; border:2px solid #ff2d75; background:#000; color:#fff; text-align:center; outline:none; width:100%; margin-top:15px; }
+button { margin-top:20px; padding:12px; border-radius:50px; border:none; background:#ff2d75; color:#fff; cursor:pointer; font-weight:bold; width:100%; font-size:16px; transition: 0.3s; }
+button:hover { transform: scale(1.05); background: #ff4d8d; }
+
+#developerInfo { margin-top:10px; font-size:12px; color:#aaa; font-family:'Cairo',sans-serif; }
+
+/* محتوى الموقع المخفي */
+#mainContent { display:none; opacity:0; transition:1s; flex-direction:column; align-items:center; justify-content:center; width:100%; }
+
+/* البالونة */
+#mainBalloon {
+    position:absolute; top:-300px; width:110px; height:140px; background:#ff2d75;
+    border-radius:50% 50% 50% 50% / 40% 40% 60% 60%; z-index:50;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    box-shadow:inset -10px -10px 20px rgba(0,0,0,0.2), 0 15px 30px rgba(255,45,117,0.6);
+    transition: top 3s cubic-bezier(0.175,0.885,0.32,1), transform 0.5s, opacity 0.5s;
+}
+#mainBalloon::after { content:''; position:absolute; bottom:-30px; width:2px; height:40px; background:rgba(255,255,255,0.6); }
+
+.revealed-ui { opacity:0; transform:translateY(20px); transition:1s ease-out; text-align:center; }
+.name-title { font-family:'Dancing Script',cursive; font-size:55px; color:#ff2d75; text-shadow:0 0 20px #ff2d75; margin-bottom:10px; }
+
+/* الجواب */
+#letterOverlay { position:fixed; inset:0; background:rgba(0,0,0,0.95); display:none; align-items:center; justify-content:center; z-index:2000; }
+.envelope {
+    width:280px; height:180px; background:#ff2d75; position:relative;
+    cursor:pointer; transform-style:preserve-3d; transition:1s;
+    display:flex; align-items:center; justify-content:center; border-radius:10px;
+    box-shadow:0 0 30px rgba(255,45,117,0.5);
+}
+.envelope.open { transform:rotateX(180deg) scale(0); opacity:0; }
+
+.paper {
+    background:#fff; color:#333; width:90%; max-width:450px; padding:35px 25px;
+    border-radius:15px; position:absolute; opacity:0; transform:scale(0.5) translateY(100px);
+    transition:1s cubic-bezier(0.175,0.885,0.32,1.275); text-align:center; pointer-events:none;
+    max-height: 85vh; overflow-y: auto;
+}
+.paper.show { opacity:1; transform:scale(1) translateY(0); pointer-events:auto; }
+
+/* القلوب المتساقطة */
+.falling { position:absolute; pointer-events:none; z-index:5; animation:fall linear forwards; font-family:'Dancing Script',cursive; color:#ff2d75; font-weight:bold; }
+@keyframes fall { to { transform:translateY(110vh) rotate(360deg); } }
+
+/* تأثير ظهور الكلام */
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+</style>
+</head>
+<body onclick="playMusic()">
+
+<canvas id="starField"></canvas>
+<div id="player" style="width:1px;height:1px;overflow:hidden;position:absolute;"></div>
+
+<div id="introOverlay">
+    <div class="intro-heart" id="introHeart">❤️<span>Rodina</span></div>
+</div>
+
+<div id="loginScreen" class="screen">
+    <div class="glass-card">
+        <h2 style="font-size:22px;">نورتي يا نن عيني ❤️</h2>
+        <input id="pass" type="password" placeholder="اكتبي اسمك هنا..." />
+        <button onclick="magicStart()">دوسي يا قلبي ❤️</button>
+        <div id="wrong" style="color:#ff8aa8; margin-top:10px; opacity:0; font-size:14px;">الاسم غلط يا روحي 😢</div>
+        <div id="developerInfo">Developer: sameh</div>
+    </div>
+</div>
+
+<div id="mainContent" class="screen">
+    <div id="mainBalloon">
+        <div style="font-family:'Dancing Script',cursive; font-size:20px; color:#fff; text-align:center;">
+            بحبك<br><span style="font-size:24px">Rodina</span>
+        </div>
+    </div>
+
+    <div id="uiReveal" class="revealed-ui">
+        <h1 class="name-title">Rodina</h1>
+        <div class="glass-card">
+            <h3 style="font-size:18px; margin-bottom:10px;">بقالنا مع بعض:</h3>
+            <div id="loveCounter" style="font-size:22px; color:#ff8aa8; font-weight:bold;"></div>
+            <p style="margin-top:15px; font-size:16px; color:#fff; line-height:1.5;">
+                كل يوم بحس فيه إني محظوظ أكتر بوجودك. ضحكتك بتنور حياتي ووجودك جنبي بيخلي كل حاجة أحلى.
+            </p>
+            <button onclick="openEnvelope()" style="margin-top:20px;">افتحي الجواب 💌</button>
+        </div>
+    </div>
+</div>
+
+<div id="letterOverlay">
+    <div class="envelope" id="env" onclick="revealPaper()">
+        <span style="font-size:50px;">✉️</span>
+    </div>
+    
+    <div class="paper" id="paper">
+        <h2 style="color:#ff2d75; font-family:'Dancing Script',cursive; margin-bottom:15px; font-size:30px;">إلى رودينا ❤️</h2>
+        <p style="font-size:17px; line-height:1.7; margin-bottom:10px;">
+            الـ 4 شهور دول كانوا حلم جميل مش عايز أصحى منه. انتي أجمل حاجة حصلت في دنيتي كلها.
+        </p>
+        <p style="font-size:17px; line-height:1.7;">
+            وجودك هو اللي بيدي طعم للأيام. ربنا يخليكي ليا يا أغلى من عيني.
+        </p>
+        
+        <button id="surpriseBtn" onclick="ultimateSurprise()" style="background:#ff2d75; margin-top:15px; width:180px; box-shadow: 0 0 15px #ff2d75;">أهم كلمة ليكي 💎</button>
+        
+        <div id="finalMessage" style="display:none; margin-top:20px; color:#ff2d75; font-weight:bold; font-size:18px; animation: fadeIn 2s; border-top: 1px dashed #ff2d75; padding-top: 15px;">
+            "وعد مني.. هفضل أحبك وأحافظ عليكي لحد آخر يوم في عمري. انتي مش بس حبيبتي، انتي عوض ربنا ليا اللي استنيته عمر كامل. بعشقك يا رودي ❤️"
+        </div>
+
+        <button onclick="closeLetter()" style="background:#444; margin-top:25px; width:100px; display:block; margin-left:auto; margin-right:auto;">إغلاق</button>
+    </div>
+</div>
+
+<script>
+// النجوم الخلفية
+const canvas = document.getElementById('starField');
+const ctx = canvas.getContext('2d');
+let stars = [];
+function initStars() {
+    canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+    stars = [];
+    for(let i=0; i<100; i++) stars.push({x: Math.random()*canvas.width, y: Math.random()*canvas.height, s: Math.random()*1.5});
+}
+function drawStars() {
+    ctx.clearRect(0,0,canvas.width,canvas.height); ctx.fillStyle="#fff";
+    stars.forEach(s => { ctx.beginPath(); ctx.arc(s.x,s.y,s.s,0,Math.PI*2); ctx.fill(); s.y+=0.2; if(s.y>canvas.height)s.y=0; });
+    requestAnimationFrame(drawStars);
+}
+initStars(); drawStars();
+
+// تشغيل الموسيقى
+function playMusic() {
+    if(!window.musicPlayed) {
+        document.getElementById('player').innerHTML = `
+            <iframe src="https://www.youtube.com/embed/T0AA8GvHzhY?autoplay=1&loop=1&playlist=T0AA8GvHzhY"
+                frameborder="0" allow="autoplay" allowfullscreen></iframe>`;
+        window.musicPlayed = true;
+    }
+}
+
+// إخفاء شاشة الترحيب
+setTimeout(() => { document.getElementById('introOverlay').style.display='none'; }, 3000);
+
+// بدء السحر
+function magicStart() {
+    let p = document.getElementById('pass').value.toLowerCase();
+    if(p === 'rodina' || p === 'رودينا') {
+        playMusic();
+        document.getElementById('loginScreen').style.opacity='0';
+        setTimeout(() => {
+            document.getElementById('loginScreen').style.display='none';
+            const mc=document.getElementById('mainContent');
+            mc.style.display='flex';
+            setTimeout(()=>mc.style.opacity='1',50);
+
+            setTimeout(()=>{
+                const b=document.getElementById('mainBalloon');
+                b.style.top='15%'; 
+                setTimeout(()=>{
+                    b.style.transform='scale(2.5)';
+                    b.style.opacity='0';
+                    createBurst();
+                    const ui=document.getElementById('uiReveal');
+                    ui.style.opacity='1';
+                    ui.style.transform='translateY(0)';
+                    startFalling();
+                },3200);
+            },500);
+        },800);
+    } else {
+        document.getElementById('wrong').style.opacity='1';
+        setTimeout(()=>document.getElementById('wrong').style.opacity='0',2000);
+    }
+}
+
+// انفجار القلوب الأول عند الدخول
+function createBurst() {
+    for(let i=0;i<30;i++){
+        const d=document.createElement('div');
+        d.className='falling'; d.innerHTML='Rodina ❤️';
+        d.style.left=(45+Math.random()*10)+'vw'; d.style.top='20vh';
+        d.style.animationDuration=(1+Math.random())+'s';
+        document.body.appendChild(d); setTimeout(()=>d.remove(),2000);
+    }
+}
+
+// القلوب المستمرة في الخلفية
+function startFalling(){
+    setInterval(()=>{
+        const d=document.createElement('div');
+        d.className='falling'; d.style.left=Math.random()*100+'vw'; d.style.top='-50px';
+        d.style.animationDuration=(4+Math.random()*3)+'s';
+        d.innerHTML='Rodina ❤️';
+        document.body.appendChild(d); setTimeout(()=>d.remove(),7000);
+    },600);
+}
+
+// فتح الجواب
+function openEnvelope(){ document.getElementById('letterOverlay').style.display='flex'; }
+function revealPaper(){
+    const env=document.getElementById('env');
+    const paper=document.getElementById('paper');
+    env.classList.add('open');
+    setTimeout(()=>{ paper.classList.add('show'); },500);
+}
+
+// المفاجأة الكبرى (عند الضغط على الزر داخل الجواب)
+function ultimateSurprise() {
+    // 1. إظهار الكلام المؤثر
+    document.getElementById('finalMessage').style.display = 'block';
+    document.getElementById('surpriseBtn').style.display = 'none';
+
+    // 2. مطر قلوب كثيف جداً
+    for(let i=0; i<80; i++) {
+        setTimeout(() => {
+            const heart = document.createElement('div');
+            heart.className = 'falling';
+            heart.innerHTML = '❤️';
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.top = '-20px';
+            heart.style.fontSize = (Math.random() * 20 + 20) + 'px';
+            heart.style.animationDuration = (Math.random() * 2 + 1) + 's';
+            heart.style.zIndex = "3000"; // فوق كل شيء
+            document.body.appendChild(heart);
+            setTimeout(() => heart.remove(), 2500);
+        }, i * 40);
+    }
+}
+
+function closeLetter(){
+    document.getElementById('letterOverlay').style.display='none';
+    document.getElementById('env').classList.remove('open');
+    document.getElementById('paper').classList.remove('show');
+    // إعادة تصفير الرسالة إذا أغلقت الجواب لفتحه مرة أخرى
+    document.getElementById('finalMessage').style.display = 'none';
+    document.getElementById('surpriseBtn').style.display = 'inline-block';
+}
+
+// عداد الحب
+function updateCounter(){
+    const diff=new Date()-new Date('2025-10-11T00:00:00');
+    const d=Math.floor(diff/86400000);
+    const h=Math.floor((diff/3600000)%24);
+    const m=Math.floor((diff/60000)%60);
+    const s=Math.floor((diff/1000)%60);
+    document.getElementById('loveCounter').innerHTML=`${d} يوم، ${h}:${m}:${s}`;
+}
+setInterval(updateCounter,1000);
+</script>
+</body>
+</html>
