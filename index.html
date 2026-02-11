@@ -155,8 +155,7 @@ if(btn){btn.onclick=()=>{
 </script>
 
 
-
-<!-- === Password + Train Intro === -->
+<!-- === Cinematic Train Intro === -->
 <style>
 #gate{position:fixed;inset:0;background:#05000a;z-index:99999;display:flex;align-items:center;justify-content:center;flex-direction:column;color:#fff}
 #gate input{padding:12px 18px;border-radius:40px;border:1px solid #ff2d75;background:#000;color:#fff;text-align:center}
@@ -164,9 +163,22 @@ if(btn){btn.onclick=()=>{
 #wrongPass{opacity:0;margin-top:8px;color:#ff8aa8}
 
 #trainScene{position:fixed;inset:0;background:#000;overflow:hidden;z-index:99998;display:none}
-.train{position:absolute;bottom:20%;left:-400px;font-size:120px;animation:trainMove 6s linear forwards}
-.paperMsg{position:absolute;bottom:45%;left:-300px;background:#fff;color:#000;padding:15px 25px;border-radius:10px;font-weight:bold;font-size:22px;animation:paperMove 6s linear forwards}
+.track{position:absolute;bottom:18%;width:200%;height:6px;background:#555;animation:trackMove 6s linear forwards}
+.train{position:absolute;bottom:18%;left:-500px;width:420px;height:140px;animation:trainMove 6s linear forwards}
+.engine{width:180px;height:120px;background:#c4003a;border-radius:20px;position:absolute;bottom:0}
+.cabin{width:140px;height:90px;background:#ff2d75;position:absolute;right:-140px;bottom:20px;border-radius:12px}
+.wheel{width:40px;height:40px;background:#111;border-radius:50%;position:absolute;bottom:-20px;animation:wheelSpin .6s linear infinite}
+.w1{left:20px}.w2{left:100px}.w3{right:40px}
+@keyframes wheelSpin{to{transform:rotate(360deg)}}
 @keyframes trainMove{to{left:110vw}}
+@keyframes trackMove{to{transform:translateX(-50%)}}
+
+.smoke{position:absolute;bottom:120px;left:60px;width:18px;height:18px;background:#ddd;border-radius:50%;opacity:.8;animation:smoke 3s linear infinite}
+.smoke:nth-child(2){left:80px;animation-delay:.6s}
+.smoke:nth-child(3){left:100px;animation-delay:1.2s}
+@keyframes smoke{0%{transform:translateY(0) scale(.5);opacity:.8}100%{transform:translateY(-160px) scale(2);opacity:0}}
+
+.paperMsg{position:absolute;bottom:55%;left:-300px;background:#fff;color:#000;padding:18px 28px;border-radius:12px;font-weight:bold;font-size:24px;animation:paperMove 6s linear forwards;box-shadow:0 10px 30px rgba(0,0,0,.4)}
 @keyframes paperMove{to{left:110vw}}
 </style>
 
@@ -178,8 +190,19 @@ if(btn){btn.onclick=()=>{
 </div>
 
 <div id="trainScene">
-  <div class="train">🚆</div>
+  <div class="track"></div>
+  <div class="train">
+    <div class="engine"></div>
+    <div class="cabin"></div>
+    <div class="wheel w1"></div>
+    <div class="wheel w2"></div>
+    <div class="wheel w3"></div>
+    <div class="smoke"></div>
+    <div class="smoke"></div>
+    <div class="smoke"></div>
+  </div>
   <div class="paperMsg">بحبك يبت يا رووديي ❤️</div>
+  <audio id="trainSound" src="train.mp3"></audio>
 </div>
 
 <script>
@@ -189,9 +212,11 @@ function checkGate(){
    document.getElementById('gate').style.display='none';
    const t=document.getElementById('trainScene');
    t.style.display='block';
+   document.getElementById('trainSound').play().catch(()=>{});
    setTimeout(()=>{t.style.display='none';},6200);
  }else{
    const w=document.getElementById('wrongPass');w.style.opacity=1;setTimeout(()=>w.style.opacity=0,2000);
  }
 }
 </script>
+
