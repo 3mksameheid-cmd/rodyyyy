@@ -12,66 +12,83 @@ body { background:#05000a; color:#fff; font-family:'Cairo', sans-serif; overflow
 
 #starField { position:fixed; top:0; left:0; width:100%; height:100%; z-index:-1; }
 
-/* --- الشهب (Shooting Stars) --- */
+/* تأثير الشهب */
 .shooting-star {
     position: absolute;
-    left: 50%; top: 50%;
-    height: 2px;
-    background: linear-gradient(-45deg, #fff, rgba(0, 0, 255, 0));
-    filter: drop-shadow(0 0 6px #fff);
-    animation: tail 3s ease-in-out infinite, shooting 3s ease-in-out infinite;
+    top: 0; left: 0;
+    width: 2px; height: 2px;
+    background: #fff;
+    border-radius: 50%;
+    box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.1), 0 0 0 8px rgba(255, 255, 255, 0.1), 0 0 20px rgba(255, 255, 255, 1);
+    animation: animate 3s linear infinite;
+    z-index: -1;
 }
-@keyframes tail { 0% { width: 0; } 30% { width: 100px; } 100% { width: 0; } }
-@keyframes shooting { 0% { transform: translateX(0); } 100% { transform: translateX(300px); } }
+.shooting-star::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 300px; height: 1px;
+    background: linear-gradient(90deg, #fff, transparent);
+}
+@keyframes animate {
+    0% { transform: rotate(315deg) translateX(0); opacity: 1; }
+    70% { opacity: 1; }
+    100% { transform: rotate(315deg) translateX(-1000px); opacity: 0; }
+}
 
-/* --- الدخلة الفخمة --- */
+/* الترحيب */
 #introOverlay {
     position:fixed; inset:0; display:flex; align-items:center; justify-content:center;
-    z-index:9999; background: radial-gradient(circle, #1a0010 0%, #05000a 100%);
-    transition: opacity 1.5s ease-in-out;
+    z-index:9999; background:#05000a; pointer-events:none;
 }
 .intro-heart {
-    color: #ff2d75; font-size: 180px; filter: drop-shadow(0 0 40px #ff2d75);
-    animation: heartIntro 3.5s forwards cubic-bezier(0.17, 0.89, 0.32, 1.49);
+    color:#ff2d75; font-size:250px; position:relative;
+    filter:drop-shadow(0 0 40px #ff2d75);
+    animation:heartGrow 3s forwards;
 }
 .intro-heart span {
-    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-    font-family: 'Dancing Script', cursive; font-size: 40px; color: #fff;
+    position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+    font-family:'Dancing Script',cursive; font-size:45px; color:#fff; text-shadow:0 0 10px #000;
 }
-@keyframes heartIntro {
-    0% { transform: scale(0); opacity: 0; }
-    40% { transform: scale(1.1); opacity: 1; }
-    100% { transform: scale(15); opacity: 0; filter: blur(20px); }
+@keyframes heartGrow {
+    0% { transform:scale(0); opacity:0; }
+    50% { transform:scale(1.2); opacity:1; }
+    100% { transform:scale(2.5); opacity:0; }
 }
 
-/* --- الكروت والواجهة --- */
 .screen { position:fixed; inset:0; display:flex; align-items:center; justify-content:center; flex-direction:column; z-index:10; padding:20px; transition:0.8s; }
 .glass-card {
-    background:rgba(255,255,255,0.03); backdrop-filter:blur(20px);
-    border:1px solid rgba(255,255,255,0.1); padding:40px 30px; border-radius:30px;
-    text-align:center; width:100%; max-width:340px; box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    background:rgba(255,255,255,0.05); backdrop-filter:blur(10px);
+    border:1px solid rgba(255,255,255,0.1); padding:30px; border-radius:25px;
+    text-align:center; width:100%; max-width:320px;
 }
-button { margin-top:20px; padding:14px; border-radius:50px; border:none; background: linear-gradient(45deg, #ff2d75, #ff8aa8); color:#fff; cursor:pointer; font-weight:bold; width:100%; transition: 0.4s; }
 
-/* --- الجواب --- */
-#letterOverlay { position:fixed; inset:0; background:rgba(0,0,0,0.98); display:none; align-items:center; justify-content:center; z-index:2000; }
+input { padding:12px; border-radius:50px; border:2px solid #ff2d75; background:#000; color:#fff; text-align:center; outline:none; width:100%; margin-top:15px; }
+button { margin-top:20px; padding:12px; border-radius:50px; border:none; background:#ff2d75; color:#fff; cursor:pointer; font-weight:bold; width:100%; font-size:16px; }
+
+#mainContent { display:none; opacity:0; transition:1s; flex-direction:column; align-items:center; justify-content:center; width:100%; }
+
+#uiReveal { opacity:0; transform:translateY(20px); transition:1s ease-out; text-align:center; }
+.name-title { font-family:'Dancing Script',cursive; font-size:55px; color:#ff2d75; text-shadow:0 0 20px #ff2d75; margin-bottom:10px; }
+
+#letterOverlay { position:fixed; inset:0; background:rgba(0,0,0,0.95); display:none; align-items:center; justify-content:center; z-index:2000; }
 .envelope {
-    width:280px; height:180px; background:#ff2d75; display:flex; align-items:center; justify-content:center; border-radius:12px;
-    box-shadow:0 0 50px rgba(255,45,117,0.4); transition: 1s; cursor: pointer;
+    width:280px; height:180px; background:#ff2d75; position:relative;
+    cursor:pointer; transform-style:preserve-3d; transition:1s;
+    display:flex; align-items:center; justify-content:center; border-radius:10px;
 }
-.envelope.open { transform: scale(0); opacity:0; }
+.envelope.open { transform:rotateX(180deg) scale(0); opacity:0; }
+
 .paper {
-    background:#fff; color:#333; width:90%; max-width:450px; padding:40px 30px; border-radius:20px;
-    position:absolute; opacity:0; transform:scale(0.8) translateY(100px); transition:1s ease; text-align:center;
+    background:#fff; color:#333; width:90%; max-width:450px; padding:40px 25px;
+    border-radius:15px; position:absolute; opacity:0; transform:scale(0.5) translateY(100px);
+    transition:1s cubic-bezier(0.175,0.885,0.32,1.275); text-align:center; pointer-events:none;
 }
 .paper.show { opacity:1; transform:scale(1) translateY(0); pointer-events:auto; }
 
-/* --- العناصر المتساقطة --- */
-.falling { position:fixed; pointer-events:none; z-index:3000; animation: fall linear forwards; font-weight: bold; white-space: nowrap; }
-@keyframes fall {
-    0% { transform: translateY(-10vh) rotate(0deg); opacity: 1; }
-    100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
-}
+.falling { position:absolute; pointer-events:none; z-index:3000; animation:fall linear forwards; }
+@keyframes fall { to { transform:translateY(110vh) rotate(360deg); } }
 </style>
 </head>
 <body onclick="playMusic()">
@@ -86,19 +103,23 @@ button { margin-top:20px; padding:14px; border-radius:50px; border:none; backgro
 
 <div id="loginScreen" class="screen">
     <div class="glass-card">
-        <h2 style="font-size:24px;">يا أغلى ما في حياتي ❤️</h2>
-        <input id="pass" type="text" placeholder="اكتبي اسمك هنا بالحب..." style="padding:14px; border-radius:50px; border:1px solid #ff2d75; background:none; color:#fff; width:100%; margin-top:20px; text-align:center; outline:none;" />
-        <button onclick="magicStart()">افتحي قلبي ❤️</button>
-        <div id="wrong" style="color:#ff8aa8; margin-top:15px; opacity:0;">الاسم غلط يا روحي 😢</div>
+        <h2 style="font-size:22px;">نورتي يا نن عيني ❤️</h2>
+        <input id="pass" type="password" placeholder="اكتبي اسمك هنا..." />
+        <button onclick="magicStart()">دوسي يا قلبي ❤️</button>
+        <div id="wrong" style="color:#ff8aa8; margin-top:10px; opacity:0; font-size:14px;">الاسم غلط يا روحي 😢</div>
+        <div id="developerInfo" style="font-size:12px; color:#aaa; margin-top:10px;">Developer: sameh</div>
     </div>
 </div>
 
 <div id="mainContent" class="screen">
-    <h1 style="font-family:'Dancing Script',cursive; font-size:60px; color:#ff2d75; text-shadow:0 0 20px #ff2d75;">Rodina</h1>
-    <div class="glass-card">
-        <h3 style="color:#aaa;">عمرنا مع بعض:</h3>
-        <div id="loveCounter" style="font-size:24px; color:#ff2d75; font-weight:bold;"></div>
-        <button onclick="openEnvelope()" style="margin-top:25px;">عندك رسالة جديدة 💌</button>
+    <div id="uiReveal">
+        <h1 class="name-title">Rodina</h1>
+        <div class="glass-card">
+            <h3 style="font-size:18px; margin-bottom:10px;">بقالنا مع بعض:</h3>
+            <div id="loveCounter" style="font-size:22px; color:#ff8aa8; font-weight:bold;"></div>
+            <p style="margin-top:15px; font-size:16px;">كل يوم بحس فيه إني محظوظ بوجودك ❤️</p>
+            <button onclick="openEnvelope()" style="margin-top:20px;">افتحي الجواب 💌</button>
+        </div>
     </div>
 </div>
 
@@ -108,46 +129,45 @@ button { margin-top:20px; padding:14px; border-radius:50px; border:none; backgro
     </div>
     
     <div class="paper" id="paper">
-        <h2 style="color:#ff2d75; font-family:'Dancing Script',cursive; margin-bottom:20px; font-size:32px;">إلى رودينا ❤️</h2>
-        <p style="font-size:18px; line-height:1.8; margin-bottom:15px;">
-            انتي النجمة اللي بتنور سمايا، والورد اللي بيجمل أيامي.
-        </p>
-        <div id="finalMessage" style="display:none; color:#ff2d75; font-weight:bold; font-size:19px; animation: fadeIn 2s; padding-top:15px; border-top:1px dashed #ff2d75;">
-            "بيني وبينك عهد.. هفضل أحبك لآخر نفس في عمري يا رودي."
+        <h2 style="color:#ff2d75; font-family:'Dancing Script',cursive; margin-bottom:15px; font-size:30px;">إلى رودينا ❤️</h2>
+        <p style="font-size:17px; margin-bottom:10px;">انتي أجمل حاجة حصلت في دنيتي كلها.</p>
+        
+        <div id="finalMessage" style="display:none; color:#ff2d75; font-weight:bold; margin-top:15px; border-top:1px dashed #ff2d75; padding-top:10px;">
+            "وعد مني هفضل أحبك لآخر يوم في عمري.. أنتي عوض ربنا ليا ❤️"
         </div>
-        <button id="surpriseBtn" onclick="ultimateSurprise()" style="background:#ff2d75; margin-top:20px;">اضغطي هنا للمفاجأة 💎</button>
-        <button onclick="closeLetter()" style="background:#eee; color:#333; margin-top:30px; width:100px;">إغلاق</button>
+        
+        <button id="surpriseBtn" onclick="ultimateSurprise()" style="background:#ff2d75; margin-top:15px; width:180px;">اضغطي للمفاجأة 💎</button>
+        <button onclick="closeLetter()" style="background:#444; margin-top:20px; width:100px;">إغلاق</button>
     </div>
 </div>
 
 <script>
 // النجوم والشهب
+function createStar() {
+    const container = document.getElementById('shootingStarsContainer');
+    const star = document.createElement('div');
+    star.className = 'shooting-star';
+    star.style.left = Math.random() * window.innerWidth + 'px';
+    star.style.top = Math.random() * window.innerHeight + 'px';
+    star.style.animationDelay = Math.random() * 5 + 's';
+    container.appendChild(star);
+    setTimeout(() => star.remove(), 5000);
+}
+setInterval(createStar, 2000);
+
 const canvas = document.getElementById('starField');
 const ctx = canvas.getContext('2d');
 let stars = [];
 function initStars() {
     canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-    for(let i=0; i<150; i++) stars.push({x: Math.random()*canvas.width, y: Math.random()*canvas.height, s: Math.random()*1.5, o: Math.random()});
+    for(let i=0; i<100; i++) stars.push({x: Math.random()*canvas.width, y: Math.random()*canvas.height, s: Math.random()*1.5});
 }
 function drawStars() {
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-    stars.forEach(s => { ctx.fillStyle=`rgba(255,255,255,${s.o})`; ctx.beginPath(); ctx.arc(s.x,s.y,s.s,0,Math.PI*2); ctx.fill(); });
+    ctx.clearRect(0,0,canvas.width,canvas.height); ctx.fillStyle="#fff";
+    stars.forEach(s => { ctx.beginPath(); ctx.arc(s.x,s.y,s.s,0,Math.PI*2); ctx.fill(); s.y+=0.2; if(s.y>canvas.height)s.y=0; });
     requestAnimationFrame(drawStars);
 }
 initStars(); drawStars();
-
-// إنشاء الشهب بشكل عشوائي
-function createShootingStar() {
-    const container = document.getElementById('shootingStarsContainer');
-    const star = document.createElement('div');
-    star.className = 'shooting-star';
-    star.style.top = Math.random() * 50 + 'vh';
-    star.style.left = Math.random() * 100 + 'vw';
-    star.style.animationDuration = (Math.random() * 2 + 2) + 's';
-    container.appendChild(star);
-    setTimeout(() => star.remove(), 3000);
-}
-setInterval(createShootingStar, 2000); // شهاب كل ثانيتين
 
 function playMusic() {
     if(!window.musicPlayed) {
@@ -156,40 +176,39 @@ function playMusic() {
     }
 }
 
-setTimeout(() => { document.getElementById('introOverlay').style.opacity = '0'; setTimeout(() => document.getElementById('introOverlay').style.display='none', 1500); }, 3500);
+setTimeout(() => { document.getElementById('introOverlay').style.display='none'; }, 3000);
 
 function magicStart() {
-    let p = document.getElementById('pass').value.trim().toLowerCase();
+    let p = document.getElementById('pass').value.toLowerCase();
     if(p === 'rodina' || p === 'رودينا') {
         playMusic();
         document.getElementById('loginScreen').style.opacity='0';
         setTimeout(() => {
             document.getElementById('loginScreen').style.display='none';
             document.getElementById('mainContent').style.display='flex';
-            setTimeout(()=>document.getElementById('mainContent').style.opacity='1',100);
-        },800);
+            setTimeout(()=> {
+                document.getElementById('mainContent').style.opacity='1';
+                document.getElementById('uiReveal').style.opacity='1';
+                document.getElementById('uiReveal').style.transform='translateY(0)';
+            }, 50);
+        }, 800);
     } else {
         document.getElementById('wrong').style.opacity='1';
         setTimeout(()=>document.getElementById('wrong').style.opacity='0',2000);
     }
 }
 
-// مطر القلوب والورد باسم رودينا
-function rain(count, includeName) {
-    const symbols = ['❤️', '💖', '🌹', '🌸', '✨'];
+// دالة نزول القلوب والورد باسم رودينا
+function rain(count) {
+    const items = ['❤️', '🌹', '🌸', 'Rodina ❤️'];
     for(let i=0; i<count; i++) {
         setTimeout(() => {
             const d = document.createElement('div');
             d.className = 'falling';
-            // جعل اسم "رودينا ❤️" يظهر بكثرة
-            if (includeName && Math.random() > 0.3) {
-                d.innerHTML = '<span style="color:#ff2d75; font-family:\'Dancing Script\'">Rodina ❤️</span>';
-            } else {
-                d.innerHTML = symbols[Math.floor(Math.random()*symbols.length)];
-            }
+            let pick = items[Math.floor(Math.random()*items.length)];
+            d.innerHTML = `<span style="color:#ff2d75; font-weight:bold; font-size:${Math.random()*20+15}px">${pick}</span>`;
             d.style.left = Math.random() * 100 + 'vw';
             d.style.top = '-50px';
-            d.style.fontSize = (Math.random() * 20 + 15) + 'px';
             d.style.animationDuration = (Math.random() * 3 + 2) + 's';
             document.body.appendChild(d);
             setTimeout(() => d.remove(), 5000);
@@ -198,19 +217,18 @@ function rain(count, includeName) {
 }
 
 function openEnvelope(){ document.getElementById('letterOverlay').style.display='flex'; }
-
 function revealPaper(){
     document.getElementById('env').classList.add('open');
     setTimeout(()=>{ 
         document.getElementById('paper').classList.add('show'); 
-        rain(120, true); // 120 قطعة مع اسم رودينا عند فتح الجواب
-    },500);
+        rain(120); // ينزل ورد وقلوب باسمها أول ما يفتح الجواب
+    }, 500);
 }
 
 function ultimateSurprise() {
     document.getElementById('finalMessage').style.display = 'block';
     document.getElementById('surpriseBtn').style.display = 'none';
-    rain(180, true); // مفاجأة كبرى بـ 180 قطعة باسمها
+    rain(150); // عاصفة تانية من القلوب والورد
 }
 
 function closeLetter(){
