@@ -3,179 +3,142 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مجرتي الخاصة ❤️</title>
+    <title>مجرة رودينا ❤️</title>
     <style>
         body, html {
             margin: 0; padding: 0; width: 100%; height: 100%;
             background: #000; overflow: hidden;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        /* خلفية النجوم والكون */
-        #universe {
-            position: fixed; width: 100%; height: 100%;
-            background: radial-gradient(circle at center, #1b2735 0%, #090a0f 100%);
-            z-index: 0;
+            font-family: 'Arial', sans-serif;
         }
 
         /* شاشة كلمة السر */
         #password-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            z-index: 1000; background: rgba(0,0,0,0.95); transition: 1.5s;
+            background: #000; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; z-index: 2000;
         }
 
         .neon-text {
-            color: #fff; text-shadow: 0 0 10px #ff4d6d, 0 0 20px #ff4d6d, 0 0 30px #ff4d6d;
-            font-size: 1.6rem; margin-bottom: 25px; text-align: center; font-weight: bold;
+            color: #fff; text-shadow: 0 0 10px #ff0055, 0 0 20px #ff0055;
+            font-size: 1.5rem; margin-bottom: 20px; text-align: center;
         }
 
         input {
-            background: transparent; border: 2px solid #ff4d6d; padding: 12px 20px;
-            border-radius: 30px; color: white; text-align: center; outline: none;
-            box-shadow: 0 0 15px #ff4d6d; font-size: 1.2rem; width: 200px;
+            background: transparent; border: 2px solid #ff0055; padding: 10px;
+            border-radius: 20px; color: white; text-align: center; outline: none;
         }
 
         button {
-            margin-top: 25px; padding: 12px 45px; border-radius: 30px; border: none;
-            background: #ff4d6d; color: white; font-weight: bold; cursor: pointer;
-            box-shadow: 0 0 20px #ff4d6d; transition: 0.4s; font-size: 1.1rem;
+            margin-top: 20px; padding: 10px 30px; border-radius: 20px; border: none;
+            background: #ff0055; color: white; cursor: pointer; font-weight: bold;
         }
 
-        button:hover { transform: scale(1.1); box-shadow: 0 0 35px #ff4d6d; }
+        /* خلفية النجوم المتحركة */
+        #canvas { position: fixed; top: 0; left: 0; z-index: 1; }
 
         /* المحتوى الرئيسي */
         #main-content {
             display: none; position: relative; z-index: 10;
-            text-align: center; color: white; height: 100vh;
             flex-direction: column; justify-content: center; align-items: center;
+            height: 100vh; color: white; text-align: center;
         }
 
-        /* حلقة المجرة المضيئة */
-        .galaxy-center {
+        /* الكوكب الأسود والحلقة (زي الصورة بالظبط) */
+        .galaxy-wrapper {
             position: relative; width: 300px; height: 300px;
             display: flex; justify-content: center; align-items: center;
         }
 
-        .ring {
-            position: absolute; width: 350px; height: 120px;
-            border: 8px solid #ff0055; border-radius: 50%;
-            box-shadow: 0 0 50px #ff0055, inset 0 0 30px #ff0055;
-            transform: rotateX(75deg);
-            animation: rotateRing 8s linear infinite;
+        .black-hole {
+            width: 120px; height: 120px; background: #000;
+            border-radius: 50%; z-index: 5; box-shadow: 0 0 20px rgba(255, 0, 85, 0.5);
         }
 
-        @keyframes rotateRing {
+        .pink-ring {
+            position: absolute; width: 320px; height: 320px;
+            border-radius: 50%; border: 15px solid #ff0055;
+            box-shadow: 0 0 50px #ff0055, inset 0 0 50px #ff0055;
+            transform: rotateX(75deg); animation: rotate 5s linear infinite;
+        }
+
+        @keyframes rotate {
             from { transform: rotateX(75deg) rotateZ(0deg); }
             to { transform: rotateX(75deg) rotateZ(360deg); }
         }
 
         #timer {
-            margin-top: 40px; font-size: 1.3rem; line-height: 1.8;
-            background: rgba(255, 77, 109, 0.15); padding: 25px;
-            border-radius: 20px; border: 1px solid rgba(255, 77, 109, 0.5);
-            backdrop-filter: blur(8px); box-shadow: 0 0 30px rgba(255, 77, 109, 0.2);
+            margin-top: 40px; font-size: 1.2rem; background: rgba(0,0,0,0.6);
+            padding: 15px; border-radius: 15px; border: 1px solid #ff0055;
         }
 
-        /* القلوب الطائرة */
-        .heart {
-            position: absolute; color: #ff4d6d; font-size: 20px;
-            pointer-events: none; animation: flyUp 6s linear infinite; opacity: 0;
-        }
-
-        @keyframes flyUp {
-            0% { transform: translateY(100vh) scale(0.5); opacity: 0; }
-            10% { opacity: 1; }
-            90% { opacity: 1; }
-            100% { transform: translateY(-10vh) scale(1.2) rotate(360deg); opacity: 0; }
-        }
+        .main-title { font-size: 2.5rem; margin: 20px 0; text-shadow: 0 0 10px #ff0055; }
     </style>
 </head>
 <body>
 
-    <div id="universe"></div>
+    <canvas id="canvas"></canvas>
 
     <div id="password-screen">
         <h2 class="neon-text">دخلي كلمة السر ياروووديي 😂❤️</h2>
-        <input type="text" id="passInput" placeholder="اكتبي rodina هنا">
-        <button onclick="unlock()">دوسي هنا يقلبي ✨</button>
-        <p id="error" style="display:none; color: #ff4d6d; margin-top:15px; font-weight: bold;">كلمة السر غلط يا روحي! 😘</p>
+        <input type="text" id="passInput" placeholder="اكتبي rodina">
+        <button onclick="check()">دوسي هنا يقلبي ✨</button>
     </div>
 
     <div id="main-content">
-        <div class="galaxy-center">
-            <div class="ring"></div>
-            <h1 class="neon-text" style="font-size: 3rem; margin: 0;">Eres mi vida ❤️</h1>
+        <div class="galaxy-wrapper">
+            <div class="black-hole"></div>
+            <div class="pink-ring"></div>
         </div>
         
+        <h1 class="main-title">Eres mi vida ❤️</h1>
         <div id="timer"></div>
         
-        <p style="margin-top: 25px; font-size: 1.4rem; font-weight: bold; color: #ffb7c5;">
-            أنتي مجرتي الخاصة يا Rodina ✨
-        </p>
-
         <a href="https://youtu.be/T0AA8GvHzhY" target="_blank" 
-           style="text-decoration:none; background:#ff0055; color:white; padding:12px 30px; border-radius:25px; margin-top:20px; display:inline-block; font-weight:bold; box-shadow: 0 0 15px #ff0055;">
-            🎵 شغلي أغنيتنا بطليني
+           style="color: #ff0055; text-decoration: none; margin-top: 20px; font-weight: bold; display: block;">
+           🎵 شغلي أغنيتنا يا روحي
         </a>
     </div>
 
     <script>
-        // إنشاء النجوم الخلفية
-        const universe = document.getElementById('universe');
-        for (let i = 0; i < 200; i++) {
-            const star = document.createElement('div');
-            star.style.position = 'absolute';
-            star.style.width = Math.random() * 3 + 'px';
-            star.style.height = star.style.width;
-            star.style.background = '#fff';
-            star.style.left = Math.random() * 100 + '%';
-            star.style.top = Math.random() * 100 + '%';
-            star.style.borderRadius = '50%';
-            star.style.opacity = Math.random();
-            star.style.boxShadow = '0 0 10px white';
-            universe.appendChild(star);
+        // نظام النجوم (المجرة)
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        let stars = [];
+        for(let i=0; i<400; i++) {
+            stars.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                size: Math.random() * 2,
+                speed: Math.random() * 0.5
+            });
         }
 
-        function unlock() {
-            const pass = document.getElementById('passInput').value.toLowerCase().trim();
-            if(pass === "rodina") {
-                document.getElementById('password-screen').style.opacity = '0';
-                setTimeout(() => {
-                    document.getElementById('password-screen').style.display = 'none';
-                    document.getElementById('main-content').style.display = 'flex';
-                    setInterval(createHeart, 300);
-                    updateTimer();
-                    setInterval(updateTimer, 1000);
-                }, 1000);
-            } else {
-                document.getElementById('error').style.display = 'block';
+        function drawStars() {
+            ctx.clearRect(0,0,canvas.width, canvas.height);
+            ctx.fillStyle = 'white';
+            stars.forEach(s => {
+                ctx.beginPath();
+                ctx.arc(s.x, s.y, s.size, 0, Math.PI*2);
+                ctx.fill();
+                s.y += s.speed;
+                if(s.y > canvas.height) s.y = 0;
+            });
+            requestAnimationFrame(drawStars);
+        }
+        drawStars();
+
+        // نظام كلمة السر
+        function check() {
+            const val = document.getElementById('passInput').value.toLowerCase().trim();
+            if(val === "rodina") {
+                document.getElementById('password-screen').style.display = 'none';
+                document.getElementById('main-content').style.display = 'flex';
+                updateTimer();
+                setInterval(updateTimer, 1000);
             }
         }
 
-        function updateTimer() {
-            const start = new Date("2025-10-11"); // تاريخ الـ 4 شهور
-            const now = new Date();
-            const diff = now - start;
-            
-            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-            const mins = Math.floor((diff / (1000 * 60)) % 60);
-            const secs = Math.floor((diff / 1000) % 60);
-
-            document.getElementById('timer').innerHTML = 
-                `بقالنا في مجرتنا مع بعض: <br> 💖 ${days} يوم و ${hours} ساعة و ${mins} دقيقة و ${secs} ثانية 💖`;
-        }
-
-        function createHeart() {
-            const heart = document.createElement('div');
-            heart.className = 'heart';
-            heart.innerHTML = '❤️';
-            heart.style.left = Math.random() * 100 + 'vw';
-            heart.style.animationDuration = (Math.random() * 3 + 3) + 's';
-            document.body.appendChild(heart);
-            setTimeout(() => heart.remove(), 6000);
-        }
-    </script>
-</body>
-</html>
+        // العداد (4 شهور)
