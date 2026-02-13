@@ -1,96 +1,164 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>Valentine Galaxy</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إلى رودينا - عالمي الخاص</title>
     <style>
-        body {
-            margin: 0;
-            padding: 0;
-            background: radial-gradient(circle at center, #1b2735 0%, #090a0f 100%);
-            overflow: hidden;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-family: Arial, sans-serif;
+        :root {
+            --primary-color: #ff4d6d;
+            --bg-color: #050505;
         }
 
-        /* تأثير النجوم المتساقطة والخلفية */
-        .stars-container {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            background: transparent;
+        body, html {
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            overflow: hidden; background: var(--bg-color);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
-        /* المجرة */
-        .galaxy {
-            position: absolute;
-            width: 600px;
-            height: 600px;
-            background: radial-gradient(circle, rgba(100, 50, 255, 0.2) 0%, transparent 70%);
-            border-radius: 50%;
-            animation: rotate 20s linear infinite;
+        /* شاشة القفل */
+        #lock-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9); z-index: 9999;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            color: white; transition: 0.5s;
         }
 
-        @keyframes rotate {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
+        input {
+            padding: 10px; border-radius: 20px; border: none; outline: none;
+            text-align: center; font-size: 1.2rem; margin-top: 15px;
         }
 
-        /* محتوى العرض */
-        .content {
-            z-index: 10;
-            text-align: center;
-            color: white;
+        /* خلفية المجرة والنجوم */
+        #canvas { position: fixed; top: 0; left: 0; z-index: 1; }
+
+        .main-content {
+            position: relative; z-index: 10; display: none;
+            height: 100vh; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; opacity: 0;
+            transition: 2s ease-in;
         }
 
-        .bears {
-            font-size: 100px; /* استخدام الإيموجي كدباديب أو يمكنك وضع رابط صورة */
-            filter: drop-shadow(0 0 20px rgba(255, 192, 203, 0.8));
-            animation: pulse 2s infinite ease-in-out;
+        /* الدباديب */
+        .bears-container {
+            font-size: 80px; margin-bottom: 20px;
+            filter: drop-shadow(0 0 20px var(--primary-color));
+            animation: float 3s infinite ease-in-out;
         }
 
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
+        /* الجواب */
+        .letter-box {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 30px; border-radius: 15px;
+            width: 80%; max-width: 500px;
+            box-shadow: 0 0 30px rgba(255, 77, 109, 0.5);
+            line-height: 1.8; text-align: center;
+            border: 2px solid var(--primary-color);
         }
 
-        h1 {
-            margin-top: 20px;
-            text-shadow: 0 0 10px #ff4d6d;
-            font-size: 24px;
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
         }
+
+        h2 { color: var(--primary-color); margin-bottom: 10px; }
     </style>
 </head>
-<body>
+<body onclick="playMusic()">
 
-    <div class="stars-container" id="stars"></div>
-    <div class="galaxy"></div>
-
-    <div class="content">
-        <div class="bears">🧸❤️🧸</div>
-        <h1>Happy Valentine's Day</h1>
-        <p>You are my whole Universe</p>
+    <div id="lock-screen">
+        <h2>أدخلي كلمة السر للرؤية عالمك 🌌</h2>
+        <input type="text" id="password" placeholder="كلمة السر هي..." oninput="checkPass()">
     </div>
 
+    <canvas id="canvas"></canvas>
+
+    <div class="main-content" id="main">
+        <div class="bears-container">🧸❤️🧸</div>
+        
+        <div class="letter-box">
+            <h2>إلى أميرتي رودينا</h2>
+            <p>
+                في يوم الحب، أردت أن أهديكِ مجرة كاملة بنجومها.. 
+                كل نجمة تتساقط هي أمنية جميلة لكِ، وكل قلب هو نبضة تنطق باسمك.
+                أنتِ لستِ فقط جزءاً من عالمي، أنتِ العالم كله. 
+                أحبكِ اليوم، وغداً، وإلى الأبد.
+            </p>
+        </div>
+    </div>
+
+    <audio id="bgMusic" loop>
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+    </audio>
+
     <script>
-        // إضافة نجوم عشوائية في الخلفية
-        const starsContainer = document.getElementById('stars');
-        for (let i = 0; i < 150; i++) {
-            const star = document.createElement('div');
-            star.style.position = 'absolute';
-            star.style.left = Math.random() * 100 + '%';
-            star.style.top = Math.random() * 100 + '%';
-            star.style.width = Math.random() * 3 + 'px';
-            star.style.height = star.style.width;
-            star.style.backgroundColor = 'white';
-            star.style.borderRadius = '50%';
-            star.style.opacity = Math.random();
-            star.style.boxShadow = `0 0 ${Math.random() * 10}px white`;
-            starsContainer.appendChild(star);
+        // نظام حماية كلمة السر
+        function checkPass() {
+            const pass = document.getElementById('password').value.toLowerCase();
+            if (pass === 'rodina' || pass === 'رودينا') {
+                document.getElementById('lock-screen').style.display = 'none';
+                const main = document.getElementById('main');
+                main.style.display = 'flex';
+                setTimeout(() => main.style.opacity = '1', 100);
+            }
         }
+
+        // تشغيل الموسيقى
+        function playMusic() {
+            document.getElementById('bgMusic').play();
+        }
+
+        // كود النجوم والقلوب المتساقطة
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        let particles = [];
+        const types = ['star', 'heart'];
+
+        class Particle {
+            constructor() {
+                this.reset();
+            }
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * -canvas.height;
+                this.size = Math.random() * 3 + 1;
+                this.speed = Math.random() * 2 + 1;
+                this.type = types[Math.floor(Math.random() * types.length)];
+                this.color = this.type === 'heart' ? '#ff4d6d' : '#ffffff';
+            }
+            update() {
+                this.y += this.speed;
+                if (this.y > canvas.height) this.reset();
+            }
+            draw() {
+                ctx.fillStyle = this.color;
+                if (this.type === 'star') {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.fill();
+                } else {
+                    ctx.font = this.size * 5 + 'px Arial';
+                    ctx.fillText('❤️', this.x, this.y);
+                }
+            }
+        }
+
+        function init() {
+            for (let i = 0; i < 150; i++) particles.push(new Particle());
+        }
+
+        function animate() {
+            ctx.fillStyle = 'rgba(5, 5, 5, 0.2)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => { p.update(); p.draw(); });
+            requestAnimationFrame(animate);
+        }
+
+        init();
+        animate();
     </script>
 </body>
 </html>
