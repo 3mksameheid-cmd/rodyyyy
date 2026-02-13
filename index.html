@@ -1,144 +1,96 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مجرة رودينا ❤️</title>
+    <title>Valentine Galaxy</title>
     <style>
-        body, html {
-            margin: 0; padding: 0; width: 100%; height: 100%;
-            background: #000; overflow: hidden;
-            font-family: 'Arial', sans-serif;
+        body {
+            margin: 0;
+            padding: 0;
+            background: radial-gradient(circle at center, #1b2735 0%, #090a0f 100%);
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: Arial, sans-serif;
         }
 
-        /* شاشة كلمة السر */
-        #password-screen {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #000; display: flex; flex-direction: column;
-            justify-content: center; align-items: center; z-index: 2000;
+        /* تأثير النجوم المتساقطة والخلفية */
+        .stars-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: transparent;
         }
 
-        .neon-text {
-            color: #fff; text-shadow: 0 0 10px #ff0055, 0 0 20px #ff0055;
-            font-size: 1.5rem; margin-bottom: 20px; text-align: center;
-        }
-
-        input {
-            background: transparent; border: 2px solid #ff0055; padding: 10px;
-            border-radius: 20px; color: white; text-align: center; outline: none;
-        }
-
-        button {
-            margin-top: 20px; padding: 10px 30px; border-radius: 20px; border: none;
-            background: #ff0055; color: white; cursor: pointer; font-weight: bold;
-        }
-
-        /* خلفية النجوم المتحركة */
-        #canvas { position: fixed; top: 0; left: 0; z-index: 1; }
-
-        /* المحتوى الرئيسي */
-        #main-content {
-            display: none; position: relative; z-index: 10;
-            flex-direction: column; justify-content: center; align-items: center;
-            height: 100vh; color: white; text-align: center;
-        }
-
-        /* الكوكب الأسود والحلقة (زي الصورة بالظبط) */
-        .galaxy-wrapper {
-            position: relative; width: 300px; height: 300px;
-            display: flex; justify-content: center; align-items: center;
-        }
-
-        .black-hole {
-            width: 120px; height: 120px; background: #000;
-            border-radius: 50%; z-index: 5; box-shadow: 0 0 20px rgba(255, 0, 85, 0.5);
-        }
-
-        .pink-ring {
-            position: absolute; width: 320px; height: 320px;
-            border-radius: 50%; border: 15px solid #ff0055;
-            box-shadow: 0 0 50px #ff0055, inset 0 0 50px #ff0055;
-            transform: rotateX(75deg); animation: rotate 5s linear infinite;
+        /* المجرة */
+        .galaxy {
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(100, 50, 255, 0.2) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: rotate 20s linear infinite;
         }
 
         @keyframes rotate {
-            from { transform: rotateX(75deg) rotateZ(0deg); }
-            to { transform: rotateX(75deg) rotateZ(360deg); }
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
         }
 
-        #timer {
-            margin-top: 40px; font-size: 1.2rem; background: rgba(0,0,0,0.6);
-            padding: 15px; border-radius: 15px; border: 1px solid #ff0055;
+        /* محتوى العرض */
+        .content {
+            z-index: 10;
+            text-align: center;
+            color: white;
         }
 
-        .main-title { font-size: 2.5rem; margin: 20px 0; text-shadow: 0 0 10px #ff0055; }
+        .bears {
+            font-size: 100px; /* استخدام الإيموجي كدباديب أو يمكنك وضع رابط صورة */
+            filter: drop-shadow(0 0 20px rgba(255, 192, 203, 0.8));
+            animation: pulse 2s infinite ease-in-out;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        h1 {
+            margin-top: 20px;
+            text-shadow: 0 0 10px #ff4d6d;
+            font-size: 24px;
+        }
     </style>
 </head>
 <body>
 
-    <canvas id="canvas"></canvas>
+    <div class="stars-container" id="stars"></div>
+    <div class="galaxy"></div>
 
-    <div id="password-screen">
-        <h2 class="neon-text">دخلي كلمة السر ياروووديي 😂❤️</h2>
-        <input type="text" id="passInput" placeholder="اكتبي rodina">
-        <button onclick="check()">دوسي هنا يقلبي ✨</button>
-    </div>
-
-    <div id="main-content">
-        <div class="galaxy-wrapper">
-            <div class="black-hole"></div>
-            <div class="pink-ring"></div>
-        </div>
-        
-        <h1 class="main-title">Eres mi vida ❤️</h1>
-        <div id="timer"></div>
-        
-        <a href="https://youtu.be/T0AA8GvHzhY" target="_blank" 
-           style="color: #ff0055; text-decoration: none; margin-top: 20px; font-weight: bold; display: block;">
-           🎵 شغلي أغنيتنا يا روحي
-        </a>
+    <div class="content">
+        <div class="bears">🧸❤️🧸</div>
+        <h1>Happy Valentine's Day</h1>
+        <p>You are my whole Universe</p>
     </div>
 
     <script>
-        // نظام النجوم (المجرة)
-        const canvas = document.getElementById('canvas');
-        const ctx = canvas.getContext('2d');
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-
-        let stars = [];
-        for(let i=0; i<400; i++) {
-            stars.push({
-                x: Math.random() * canvas.width,
-                y: Math.random() * canvas.height,
-                size: Math.random() * 2,
-                speed: Math.random() * 0.5
-            });
+        // إضافة نجوم عشوائية في الخلفية
+        const starsContainer = document.getElementById('stars');
+        for (let i = 0; i < 150; i++) {
+            const star = document.createElement('div');
+            star.style.position = 'absolute';
+            star.style.left = Math.random() * 100 + '%';
+            star.style.top = Math.random() * 100 + '%';
+            star.style.width = Math.random() * 3 + 'px';
+            star.style.height = star.style.width;
+            star.style.backgroundColor = 'white';
+            star.style.borderRadius = '50%';
+            star.style.opacity = Math.random();
+            star.style.boxShadow = `0 0 ${Math.random() * 10}px white`;
+            starsContainer.appendChild(star);
         }
-
-        function drawStars() {
-            ctx.clearRect(0,0,canvas.width, canvas.height);
-            ctx.fillStyle = 'white';
-            stars.forEach(s => {
-                ctx.beginPath();
-                ctx.arc(s.x, s.y, s.size, 0, Math.PI*2);
-                ctx.fill();
-                s.y += s.speed;
-                if(s.y > canvas.height) s.y = 0;
-            });
-            requestAnimationFrame(drawStars);
-        }
-        drawStars();
-
-        // نظام كلمة السر
-        function check() {
-            const val = document.getElementById('passInput').value.toLowerCase().trim();
-            if(val === "rodina") {
-                document.getElementById('password-screen').style.display = 'none';
-                document.getElementById('main-content').style.display = 'flex';
-                updateTimer();
-                setInterval(updateTimer, 1000);
-            }
-        }
-
-        // العداد (4 شهور)
+    </script>
+</body>
+</html>
