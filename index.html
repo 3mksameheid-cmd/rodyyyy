@@ -3,29 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>إلى رودينا ❤️</title>
+    <title>إلى Rodina ❤️</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');
+        
         body, html {
             margin: 0; padding: 0; width: 100%; height: 100%;
-            overflow: hidden; background: #050505;
+            overflow: hidden; background: #000;
             font-family: 'Arial', sans-serif; color: white;
             display: flex; justify-content: center; align-items: center;
         }
 
         canvas { position: fixed; inset: 0; z-index: 1; }
 
+        /* شاشة الوردة الترحيبية */
+        #welcome-flower {
+            position: fixed; inset: 0; background: #000; z-index: 10000;
+            display: flex; justify-content: center; align-items: center;
+            transition: opacity 2s ease-in-out;
+        }
+        .flower { font-size: 80px; animation: bloom 2s infinite alternate; cursor: pointer; }
+        @keyframes bloom { from { transform: scale(0.8); opacity: 0.5; } to { transform: scale(1.2); opacity: 1; } }
+
         /* شاشة كلمة السر */
         #lock-screen {
             position: fixed; inset: 0; background: #000; z-index: 9999;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            transition: 1s;
+            display: none; flex-direction: column; justify-content: center; align-items: center;
+            opacity: 0; transition: opacity 1s;
         }
-
         input {
             padding: 15px; border-radius: 30px; border: 2px solid #ff4d6d;
             background: #111; color: white; text-align: center; font-size: 1.2rem;
-            outline: none; box-shadow: 0 0 15px #ff4d6d;
+            outline: none; box-shadow: 0 0 20px #ff4d6d;
         }
 
         /* البالونة */
@@ -34,10 +44,11 @@
             animation: floating 3s infinite ease-in-out;
         }
         .balloon {
-            width: 140px; height: 170px; background: #ff4d6d;
+            width: 150px; height: 180px; background: #ff4d6d;
             border-radius: 50% 50% 50% 50% / 45% 45% 55% 55%;
             display: flex; justify-content: center; align-items: center;
-            font-size: 1.5rem; font-weight: bold; box-shadow: inset -10px -10px 20px rgba(0,0,0,0.3);
+            font-family: 'Pacifico', cursive; font-size: 1.8rem;
+            box-shadow: inset -10px -10px 20px rgba(0,0,0,0.3);
         }
 
         /* الجواب */
@@ -49,47 +60,70 @@
         }
 
         @keyframes floating {
-            0%, 100% { transform: translateY(0) rotate(-2deg); }
-            50% { transform: translateY(-30px) rotate(2deg); }
+            0%, 100% { transform: translateY(0) rotate(-3deg); }
+            50% { transform: translateY(-30px) rotate(3deg); }
         }
 
-        #youtube-player { position: absolute; top: -1000px; left: -1000px; }
+        #youtube-player { position: absolute; top: -1000px; }
     </style>
 </head>
-<body>
+<body onclick="startEverything()">
 
     <div id="youtube-player"></div>
 
-    <canvas id="canvas"></canvas>
-
-    <div id="lock-screen">
-        <h2 style="margin-bottom: 20px; color: #ff4d6d;">اكتب كلمة السر 🔒</h2>
-        <input type="text" id="pass" placeholder="كلمة السر هي..." oninput="checkPass()">
+    <div id="welcome-flower" onclick="hideFlower()">
+        <div class="flower">🌹</div>
     </div>
 
+    <div id="lock-screen">
+        <h2 style="margin-bottom: 20px; color: #ff4d6d;">أدخلي كلمة السر 🔒</h2>
+        <input type="text" id="pass" placeholder="..." oninput="checkPass()">
+    </div>
+
+    <canvas id="canvas"></canvas>
+
     <div id="balloon-container" onclick="explode()">
-        <div class="balloon">رودينا</div>
-        <div style="width: 2px; height: 80px; background: white; margin: 0 auto;"></div>
+        <div class="balloon">Rodina</div>
+        <div style="width: 2px; height: 100px; background: white; margin: 0 auto;"></div>
     </div>
 
     <div id="letter">
-        <h1 style="color: #ff4d6d; margin-top: 0;">أحبكِ يا رودينا ❤️</h1>
+        <h1 style="color: #ff4d6d; margin:0;">Happy Valentine's ❤️</h1>
         <p style="font-size: 1.2rem; line-height: 1.6;">
-            بين كل نجوم المجرة، مفيش نجمة بتنور زي عينيكي. 
-            أنتِ الحب اللي كنت بتمناه، والضحكة اللي بتخلي يومي أحلى.
+            في هذه المجرة الواسعة، أنتِ النجمة الأجمل. 
+            أحبكِ اليوم وكل يوم يا Rodina.
         </p>
-        <p style="font-weight: bold;">عيد حب سعيد يا أغلى ما عندي</p>
     </div>
 
     <script src="https://www.youtube.com/iframe_api"></script>
     <script>
         let player;
+        let audioStarted = false;
+
         function onYouTubeIframeAPIReady() {
             player = new YT.Player('youtube-player', {
                 height: '0', width: '0',
                 videoId: 'sZ5v09Vvcww', // رامي صبري - بحبك
                 playerVars: { 'autoplay': 1, 'controls': 0, 'mute': 0 }
             });
+        }
+
+        function startEverything() {
+            if (!audioStarted && player && player.playVideo) {
+                player.playVideo();
+                audioStarted = true;
+            }
+        }
+
+        function hideFlower() {
+            const flowerScreen = document.getElementById('welcome-flower');
+            flowerScreen.style.opacity = '0';
+            setTimeout(() => {
+                flowerScreen.style.display = 'none';
+                const lock = document.getElementById('lock-screen');
+                lock.style.display = 'flex';
+                setTimeout(() => lock.style.opacity = '1', 50);
+            }, 2000);
         }
 
         function checkPass() {
@@ -99,72 +133,51 @@
                 setTimeout(() => {
                     document.getElementById('lock-screen').style.display = 'none';
                     document.getElementById('balloon-container').style.display = 'block';
-                    if(player) player.playVideo();
+                    if(player) player.unMute(); player.playVideo();
                 }, 1000);
             }
         }
 
         function explode() {
-            // فرقعة البالونة
             document.getElementById('balloon-container').style.display = 'none';
-            
-            // انفجار كونفيتي
-            confetti({
-                particleCount: 150,
-                spread: 100,
-                origin: { y: 0.6 },
-                colors: ['#ff4d6d', '#ffffff', '#ff8fa3']
-            });
-
-            // ظهور الجواب
+            confetti({ particleCount: 200, spread: 100, origin: { y: 0.6 } });
             setTimeout(() => {
                 document.getElementById('letter').style.display = 'block';
-                // انفجارات مستمرة للجمال
                 setInterval(() => {
-                    confetti({ particleCount: 50, angle: 60, spread: 55, origin: { x: 0 } });
-                    confetti({ particleCount: 50, angle: 120, spread: 55, origin: { x: 1 } });
+                    confetti({ particleCount: 40, angle: 60, spread: 55, origin: { x: 0 } });
+                    confetti({ particleCount: 40, angle: 120, spread: 55, origin: { x: 1 } });
                 }, 2000);
             }, 500);
         }
 
-        // كود النجوم والقلوب اللي بتظهر وتختفي
+        // كود النجوم والقلوب
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-
+        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
         let particles = [];
         class Particle {
-            constructor() {
+            constructor() { this.reset(); }
+            reset() {
                 this.x = Math.random() * canvas.width;
                 this.y = Math.random() * canvas.height;
                 this.size = Math.random() * 2 + 1;
                 this.opacity = Math.random();
-                this.fade = Math.random() * 0.02 + 0.005;
+                this.fade = Math.random() * 0.01 + 0.005;
                 this.type = Math.random() > 0.8 ? 'heart' : 'star';
             }
             draw() {
                 ctx.globalAlpha = this.opacity;
                 ctx.fillStyle = this.type === 'heart' ? '#ff4d6d' : 'white';
                 if (this.type === 'star') {
-                    ctx.beginPath();
-                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                    ctx.fill();
+                    ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI*2); ctx.fill();
                 } else {
-                    ctx.font = '14px Arial';
-                    ctx.fillText('❤️', this.x, this.y);
+                    ctx.font = '14px Arial'; ctx.fillText('❤️', this.x, this.y);
                 }
                 this.opacity -= this.fade;
-                if (this.opacity <= 0) {
-                    this.x = Math.random() * canvas.width;
-                    this.y = Math.random() * canvas.height;
-                    this.opacity = 1;
-                }
+                if (this.opacity <= 0) this.reset();
             }
         }
-
-        for (let i = 0; i < 150; i++) particles.push(new Particle());
-
+        for(let i=0; i<150; i++) particles.push(new Particle());
         function animate() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             particles.forEach(p => p.draw());
