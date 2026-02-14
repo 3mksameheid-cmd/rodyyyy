@@ -3,161 +3,184 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>إلى رودينا - عالمي الخاص</title>
+    <title>مفاجأة لرودينا 💖</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <style>
-        :root {
-            --primary-color: #ff4d6d;
-            --bg-color: #050505;
-        }
-
-        body, html {
-            margin: 0; padding: 0; width: 100%; height: 100%;
-            overflow: hidden; background: var(--bg-color);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        :root { --pink: #ff4d6d; --dark: #050505; }
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: var(--dark); font-family: 'Cairo', sans-serif; color: white; }
+        
+        /* شاشة الترحيب */
+        #welcome-screen {
+            position: fixed; inset: 0; background: var(--dark); z-index: 10000;
+            display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;
         }
 
         /* شاشة القفل */
         #lock-screen {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9); z-index: 9999;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            color: white; transition: 0.5s;
+            position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 9999;
+            display: none; flex-direction: column; justify-content: center; align-items: center;
+        }
+
+        .btn {
+            padding: 15px 40px; background: var(--pink); border: none; border-radius: 50px;
+            color: white; font-size: 1.2rem; cursor: pointer; margin-top: 20px; box-shadow: 0 0 20px var(--pink);
         }
 
         input {
-            padding: 10px; border-radius: 20px; border: none; outline: none;
-            text-align: center; font-size: 1.2rem; margin-top: 15px;
+            padding: 12px; border-radius: 25px; border: 2px solid var(--pink); outline: none;
+            text-align: center; font-size: 1.2rem; background: #222; color: white; width: 250px;
         }
 
-        /* خلفية المجرة والنجوم */
-        #canvas { position: fixed; top: 0; left: 0; z-index: 1; }
+        /* النجوم والقلوب */
+        #canvas { position: fixed; inset: 0; z-index: 1; }
 
-        .main-content {
-            position: relative; z-index: 10; display: none;
-            height: 100vh; display: flex; flex-direction: column;
-            justify-content: center; align-items: center; opacity: 0;
-            transition: 2s ease-in;
+        /* البالونة */
+        #balloon {
+            position: absolute; top: -200px; cursor: pointer; z-index: 100;
+            display: none; transition: top 3s ease-in;
+        }
+        .balloon-body {
+            width: 150px; height: 180px; background: var(--pink);
+            border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
+            display: flex; justify-content: center; align-items: center;
+            font-weight: bold; font-size: 1.5rem; box-shadow: inset -10px -10px 20px rgba(0,0,0,0.2);
         }
 
-        /* الدباديب */
-        .bears-container {
-            font-size: 80px; margin-bottom: 20px;
-            filter: drop-shadow(0 0 20px var(--primary-color));
-            animation: float 3s infinite ease-in-out;
+        /* الظرف والكلام */
+        #envelope {
+            position: relative; z-index: 50; display: none; cursor: pointer;
+            font-size: 100px; animation: bounce 2s infinite;
         }
 
-        /* الجواب */
-        .letter-box {
-            background: rgba(255, 255, 255, 0.9);
-            padding: 30px; border-radius: 15px;
-            width: 80%; max-width: 500px;
-            box-shadow: 0 0 30px rgba(255, 77, 109, 0.5);
-            line-height: 1.8; text-align: center;
-            border: 2px solid var(--primary-color);
+        #letter {
+            display: none; background: white; color: #333; padding: 30px;
+            border-radius: 15px; width: 80%; max-width: 400px; text-align: center;
+            box-shadow: 0 0 50px var(--pink); border: 4px double var(--pink);
+            z-index: 60; position: relative;
         }
 
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-20px); }
-        }
-
-        h2 { color: var(--primary-color); margin-bottom: 10px; }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
+        #youtube-player { position: absolute; top: -999px; }
     </style>
 </head>
-<body onclick="playMusic()">
+<body>
+
+    <div id="welcome-screen">
+        <h1 style="font-size: 3rem;">أهلاً بكِ في عالمي الخاص ✨</h1>
+        <p>مستعدة تشوفي المفاجأة؟</p>
+        <button class="btn" onclick="showLock()">أيوة مستعدة!</button>
+    </div>
 
     <div id="lock-screen">
-        <h2>أدخلي كلمة السر للرؤية عالمك 🌌</h2>
-        <input type="text" id="password" placeholder="كلمة السر هي..." oninput="checkPass()">
+        <h2>ادخلي كلمة السر لرؤية المفاجأة</h2>
+        <input type="text" id="passInput" placeholder="كلمة السر هي..." oninput="checkPass()">
     </div>
 
+    <div id="balloon" onclick="popBalloon()">
+        <div class="balloon-body">رودينا</div>
+        <div style="width:2px; height:100px; background:white; margin:auto;"></div>
+    </div>
+
+    <div id="envelope" onclick="openLetter()">📩</div>
+
+    <div id="letter">
+        <h2 style="color:var(--pink)">إلى أغلى رودينا في الكون ❤️</h2>
+        <p>
+            بمناسبة عيد الحب، حبيت أهاديكِ بحاجة مختلفة.. 
+            أنتِ النجمة اللي بتنور سمايا، والقلب اللي بيحسسني بالأمان.
+            كل ثانية وأنتِ معايا هي عيد.
+        </p>
+        <h3 style="color:var(--pink)">بحبك يا Rodina</h3>
+    </div>
+
+    <div id="youtube-player"></div>
     <canvas id="canvas"></canvas>
 
-    <div class="main-content" id="main">
-        <div class="bears-container">🧸❤️🧸</div>
-        
-        <div class="letter-box">
-            <h2>إلى أميرتي رودينا</h2>
-            <p>
-                في يوم الحب، أردت أن أهديكِ مجرة كاملة بنجومها.. 
-                كل نجمة تتساقط هي أمنية جميلة لكِ، وكل قلب هو نبضة تنطق باسمك.
-                أنتِ لستِ فقط جزءاً من عالمي، أنتِ العالم كله. 
-                أحبكِ اليوم، وغداً، وإلى الأبد.
-            </p>
-        </div>
-    </div>
-
-    <audio id="bgMusic" loop>
-        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
-    </audio>
-
+    <script src="https://www.youtube.com/iframe_api"></script>
     <script>
-        // نظام حماية كلمة السر
+        let player;
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('youtube-player', {
+                height: '0', width: '0',
+                videoId: 'sZ5v09Vvcww', // أغنية رامي صبري - بحبك
+                events: { 'onReady': onPlayerReady }
+            });
+        }
+        function onPlayerReady(event) { event.target.setVolume(100); }
+
+        function showLock() {
+            document.getElementById('welcome-screen').style.display = 'none';
+            document.getElementById('lock-screen').style.display = 'flex';
+        }
+
         function checkPass() {
-            const pass = document.getElementById('password').value.toLowerCase();
-            if (pass === 'rodina' || pass === 'رودينا') {
+            let val = document.getElementById('passInput').value.toLowerCase();
+            if (val === 'rodina' || val === 'رودينا') {
                 document.getElementById('lock-screen').style.display = 'none';
-                const main = document.getElementById('main');
-                main.style.display = 'flex';
-                setTimeout(() => main.style.opacity = '1', 100);
+                startMagic();
+                if(player) player.playVideo();
             }
         }
 
-        // تشغيل الموسيقى
-        function playMusic() {
-            document.getElementById('bgMusic').play();
+        function startMagic() {
+            const b = document.getElementById('balloon');
+            b.style.display = 'block';
+            setTimeout(() => { b.style.top = '20%'; }, 100);
         }
 
-        // كود النجوم والقلوب المتساقطة
+        function popBalloon() {
+            document.getElementById('balloon').style.display = 'none';
+            confetti({ particleCount: 200, spread: 70, origin: { y: 0.3 } });
+            // ظهور الظرف
+            setTimeout(() => {
+                const env = document.getElementById('envelope');
+                env.style.display = 'block';
+            }, 500);
+        }
+
+        function openLetter() {
+            document.getElementById('envelope').style.display = 'none';
+            // انفجارات عند فتح الظرف
+            var duration = 3 * 1000;
+            var end = Date.now() + duration;
+            (function frame() {
+                confetti({ particleCount: 5, angle: 60, spread: 55, origin: { x: 0 } });
+                confetti({ particleCount: 5, angle: 120, spread: 55, origin: { x: 1 } });
+                if (Date.now() < end) { requestAnimationFrame(frame); }
+            }());
+            document.getElementById('letter').style.display = 'block';
+        }
+
+        // كود النجوم والقلوب الخلفية
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-
+        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
         let particles = [];
-        const types = ['star', 'heart'];
-
         class Particle {
-            constructor() {
-                this.reset();
-            }
+            constructor() { this.reset(); }
             reset() {
                 this.x = Math.random() * canvas.width;
                 this.y = Math.random() * -canvas.height;
                 this.size = Math.random() * 3 + 1;
-                this.speed = Math.random() * 2 + 1;
-                this.type = types[Math.floor(Math.random() * types.length)];
-                this.color = this.type === 'heart' ? '#ff4d6d' : '#ffffff';
+                this.speed = Math.random() * 2 + 0.5;
+                this.type = Math.random() > 0.5 ? 'star' : 'heart';
             }
-            update() {
-                this.y += this.speed;
-                if (this.y > canvas.height) this.reset();
-            }
+            update() { this.y += this.speed; if (this.y > canvas.height) this.reset(); }
             draw() {
-                ctx.fillStyle = this.color;
+                ctx.fillStyle = this.type === 'star' ? 'white' : '#ff4d6d';
                 if (this.type === 'star') {
-                    ctx.beginPath();
-                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                    ctx.fill();
+                    ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI*2); ctx.fill();
                 } else {
-                    ctx.font = this.size * 5 + 'px Arial';
-                    ctx.fillText('❤️', this.x, this.y);
+                    ctx.font = '15px Arial'; ctx.fillText('❤️', this.x, this.y);
                 }
             }
         }
-
-        function init() {
-            for (let i = 0; i < 150; i++) particles.push(new Particle());
-        }
-
+        for(let i=0; i<100; i++) particles.push(new Particle());
         function animate() {
-            ctx.fillStyle = 'rgba(5, 5, 5, 0.2)';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = 'rgba(5, 5, 5, 0.2)'; ctx.fillRect(0,0,canvas.width, canvas.height);
             particles.forEach(p => { p.update(); p.draw(); });
             requestAnimationFrame(animate);
         }
-
-        init();
         animate();
     </script>
 </body>
