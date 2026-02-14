@@ -6,13 +6,14 @@
     <title>إلى Rodina ❤️</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Pacifico&family=Cairo:wght@700&display=swap');
         
         body, html {
             margin: 0; padding: 0; width: 100%; height: 100%;
             overflow: hidden; background: #000;
-            font-family: 'Arial', sans-serif; color: white;
+            font-family: 'Cairo', sans-serif; color: white;
             display: flex; justify-content: center; align-items: center;
+            cursor: pointer;
         }
 
         canvas { position: fixed; inset: 0; z-index: 1; }
@@ -20,11 +21,11 @@
         /* شاشة الوردة الترحيبية */
         #welcome-flower {
             position: fixed; inset: 0; background: #000; z-index: 10000;
-            display: flex; justify-content: center; align-items: center;
-            transition: opacity 2s ease-in-out;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            transition: opacity 1.5s ease-in-out;
         }
-        .flower { font-size: 80px; animation: bloom 2s infinite alternate; cursor: pointer; }
-        @keyframes bloom { from { transform: scale(0.8); opacity: 0.5; } to { transform: scale(1.2); opacity: 1; } }
+        .flower { font-size: 100px; animation: bloom 2s infinite alternate; }
+        @keyframes bloom { from { transform: scale(0.9); filter: drop-shadow(0 0 10px #f00); } to { transform: scale(1.1); filter: drop-shadow(0 0 30px #f00); } }
 
         /* شاشة كلمة السر */
         #lock-screen {
@@ -35,7 +36,7 @@
         input {
             padding: 15px; border-radius: 30px; border: 2px solid #ff4d6d;
             background: #111; color: white; text-align: center; font-size: 1.2rem;
-            outline: none; box-shadow: 0 0 20px #ff4d6d;
+            outline: none; box-shadow: 0 0 20px #ff4d6d; width: 260px;
         }
 
         /* البالونة */
@@ -44,11 +45,11 @@
             animation: floating 3s infinite ease-in-out;
         }
         .balloon {
-            width: 150px; height: 180px; background: #ff4d6d;
+            width: 160px; height: 190px; background: #ff4d6d;
             border-radius: 50% 50% 50% 50% / 45% 45% 55% 55%;
             display: flex; justify-content: center; align-items: center;
-            font-family: 'Pacifico', cursive; font-size: 1.8rem;
-            box-shadow: inset -10px -10px 20px rgba(0,0,0,0.3);
+            font-family: 'Pacifico', cursive; font-size: 2rem;
+            box-shadow: inset -10px -10px 20px rgba(0,0,0,0.3), 0 0 30px rgba(255,77,109,0.5);
         }
 
         /* الجواب */
@@ -64,54 +65,48 @@
             50% { transform: translateY(-30px) rotate(3deg); }
         }
 
-        #youtube-player { position: absolute; top: -1000px; }
+        /* مشغل الموسيقى المخفي */
+        #player { position: absolute; width: 1px; height: 1px; overflow: hidden; opacity: 0; }
     </style>
 </head>
-<body onclick="startEverything()">
+<body onclick="playMusic()">
 
-    <div id="youtube-player"></div>
+    <div id="player"></div>
 
     <div id="welcome-flower" onclick="hideFlower()">
         <div class="flower">🌹</div>
+        <p style="margin-top: 20px; font-size: 1.2rem; color: #ff4d6d;">دوسي على الوردة يا رودي</p>
     </div>
 
     <div id="lock-screen">
         <h2 style="margin-bottom: 20px; color: #ff4d6d;">أدخلي كلمة السر 🔒</h2>
-        <input type="text" id="pass" placeholder="..." oninput="checkPass()">
+        <input type="text" id="pass" placeholder="اكتبي اسمك هنا..." oninput="checkPass()">
     </div>
 
     <canvas id="canvas"></canvas>
 
     <div id="balloon-container" onclick="explode()">
         <div class="balloon">Rodina</div>
-        <div style="width: 2px; height: 100px; background: white; margin: 0 auto;"></div>
+        <div style="width: 2px; height: 100px; background: white; margin: 0 auto; opacity: 0.6;"></div>
     </div>
 
     <div id="letter">
-        <h1 style="color: #ff4d6d; margin:0;">Happy Valentine's ❤️</h1>
-        <p style="font-size: 1.2rem; line-height: 1.6;">
-            في هذه المجرة الواسعة، أنتِ النجمة الأجمل. 
-            أحبكِ اليوم وكل يوم يا Rodina.
+        <h1 style="color: #ff4d6d; margin:0; font-family: 'Pacifico', cursive;">I Love You ❤️</h1>
+        <p style="font-size: 1.2rem; line-height: 1.6; margin-top: 15px;">
+            أنتِ أجمل صدفة في حياتي، وجودك هو اللي بيخلي كل حاجة حواليا بتلمع. 
+            يا رب نفضل مع بعض دايمًا يا أغلى من عيني.
         </p>
+        <p style="font-weight: bold; color: #ff4d6d;">Happy Valentine, Rodina</p>
     </div>
 
-    <script src="https://www.youtube.com/iframe_api"></script>
     <script>
-        let player;
-        let audioStarted = false;
-
-        function onYouTubeIframeAPIReady() {
-            player = new YT.Player('youtube-player', {
-                height: '0', width: '0',
-                videoId: 'sZ5v09Vvcww', // رامي صبري - بحبك
-                playerVars: { 'autoplay': 1, 'controls': 0, 'mute': 0 }
-            });
-        }
-
-        function startEverything() {
-            if (!audioStarted && player && player.playVideo) {
-                player.playVideo();
-                audioStarted = true;
+        // تشغيل الموسيقى (رابط رامي صبري - بحبك)
+        function playMusic() {
+            if(!window.musicPlayed) {
+                document.getElementById('player').innerHTML = `
+                    <iframe src="https://www.youtube.com/embed/sZ5v09Vvcww?autoplay=1&loop=1&playlist=sZ5v09Vvcww"
+                        frameborder="0" allow="autoplay" allowfullscreen></iframe>`;
+                window.musicPlayed = true;
             }
         }
 
@@ -123,7 +118,7 @@
                 const lock = document.getElementById('lock-screen');
                 lock.style.display = 'flex';
                 setTimeout(() => lock.style.opacity = '1', 50);
-            }, 2000);
+            }, 1500);
         }
 
         function checkPass() {
@@ -133,16 +128,23 @@
                 setTimeout(() => {
                     document.getElementById('lock-screen').style.display = 'none';
                     document.getElementById('balloon-container').style.display = 'block';
-                    if(player) player.unMute(); player.playVideo();
                 }, 1000);
             }
         }
 
         function explode() {
             document.getElementById('balloon-container').style.display = 'none';
-            confetti({ particleCount: 200, spread: 100, origin: { y: 0.6 } });
+            // انفجار كبير
+            confetti({
+                particleCount: 250,
+                spread: 100,
+                origin: { y: 0.6 },
+                colors: ['#ff4d6d', '#ffffff', '#ff0000']
+            });
+            
             setTimeout(() => {
                 document.getElementById('letter').style.display = 'block';
+                // مطر قلوب مستمر
                 setInterval(() => {
                     confetti({ particleCount: 40, angle: 60, spread: 55, origin: { x: 0 } });
                     confetti({ particleCount: 40, angle: 120, spread: 55, origin: { x: 1 } });
@@ -150,11 +152,12 @@
             }, 500);
         }
 
-        // كود النجوم والقلوب
+        // كود النجوم والقلوب المتساقطة والخافتة
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
         canvas.width = window.innerWidth; canvas.height = window.innerHeight;
         let particles = [];
+
         class Particle {
             constructor() { this.reset(); }
             reset() {
@@ -163,27 +166,33 @@
                 this.size = Math.random() * 2 + 1;
                 this.opacity = Math.random();
                 this.fade = Math.random() * 0.01 + 0.005;
-                this.type = Math.random() > 0.8 ? 'heart' : 'star';
+                this.type = Math.random() > 0.85 ? 'heart' : 'star';
             }
             draw() {
                 ctx.globalAlpha = this.opacity;
-                ctx.fillStyle = this.type === 'heart' ? '#ff4d6d' : 'white';
+                ctx.fillStyle = this.type === 'heart' ? '#ff4d6d' : '#fff';
                 if (this.type === 'star') {
                     ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI*2); ctx.fill();
                 } else {
-                    ctx.font = '14px Arial'; ctx.fillText('❤️', this.x, this.y);
+                    ctx.font = '16px Arial'; ctx.fillText('❤️', this.x, this.y);
                 }
                 this.opacity -= this.fade;
                 if (this.opacity <= 0) this.reset();
             }
         }
+
         for(let i=0; i<150; i++) particles.push(new Particle());
+
         function animate() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             particles.forEach(p => p.draw());
             requestAnimationFrame(animate);
         }
         animate();
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+        });
     </script>
 </body>
 </html>
