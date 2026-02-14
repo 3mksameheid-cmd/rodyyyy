@@ -6,11 +6,11 @@
     <title>إلى Rodina ❤️</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Pacifico&family=Cairo:wght@700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Pacifico&family=Cairo:wght@400;700&display=swap');
         
         body, html {
             margin: 0; padding: 0; width: 100%; height: 100%;
-            overflow: hidden; background: #000;
+            overflow: hidden; background: #05000a;
             font-family: 'Cairo', sans-serif; color: white;
             display: flex; justify-content: center; align-items: center;
             cursor: pointer;
@@ -18,16 +18,16 @@
 
         canvas { position: fixed; inset: 0; z-index: 1; }
 
-        /* شاشة الوردة الترحيبية */
+        /* شاشة الوردة */
         #welcome-flower {
             position: fixed; inset: 0; background: #000; z-index: 10000;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
-            transition: opacity 1.5s ease-in-out;
+            transition: opacity 1.5s;
         }
         .flower { font-size: 100px; animation: bloom 2s infinite alternate; }
-        @keyframes bloom { from { transform: scale(0.9); filter: drop-shadow(0 0 10px #f00); } to { transform: scale(1.1); filter: drop-shadow(0 0 30px #f00); } }
+        @keyframes bloom { from { transform: scale(0.9); filter: drop-shadow(0 0 15px #f00); } to { transform: scale(1.1); filter: drop-shadow(0 0 35px #f00); } }
 
-        /* شاشة كلمة السر */
+        /* شاشة السر */
         #lock-screen {
             position: fixed; inset: 0; background: #000; z-index: 9999;
             display: none; flex-direction: column; justify-content: center; align-items: center;
@@ -39,33 +39,41 @@
             outline: none; box-shadow: 0 0 20px #ff4d6d; width: 260px;
         }
 
-        /* البالونة */
-        #balloon-container {
-            display: none; position: relative; z-index: 100; cursor: pointer;
-            animation: floating 3s infinite ease-in-out;
+        /* البالونة والزر */
+        #main-stage {
+            display: none; flex-direction: column; align-items: center; z-index: 100;
         }
         .balloon {
-            width: 160px; height: 190px; background: #ff4d6d;
+            width: 150px; height: 180px; background: #ff4d6d;
             border-radius: 50% 50% 50% 50% / 45% 45% 55% 55%;
             display: flex; justify-content: center; align-items: center;
             font-family: 'Pacifico', cursive; font-size: 2rem;
             box-shadow: inset -10px -10px 20px rgba(0,0,0,0.3), 0 0 30px rgba(255,77,109,0.5);
+            animation: floating 3s infinite ease-in-out;
         }
+        .action-btn {
+            margin-top: 50px; padding: 12px 30px; background: #ff4d6d;
+            border: none; border-radius: 50px; color: white; font-weight: bold;
+            font-size: 1.3rem; cursor: pointer; box-shadow: 0 0 15px #ff4d6d;
+            transition: 0.3s;
+        }
+        .action-btn:hover { transform: scale(1.1); background: #ff758f; }
 
-        /* الجواب */
+        /* الجواب (اللون الجديد) */
         #letter {
-            display: none; z-index: 200; background: rgba(255, 255, 255, 0.95);
-            color: #333; padding: 40px; border-radius: 20px;
-            width: 85%; max-width: 400px; text-align: center;
-            border: 4px solid #ff4d6d; box-shadow: 0 0 50px #ff4d6d;
+            display: none; z-index: 200; 
+            background: rgba(128, 0, 32, 0.85); /* لون نبيتي شفاف فخم */
+            backdrop-filter: blur(10px);
+            color: #fff; padding: 35px; border-radius: 25px;
+            width: 85%; max-width: 450px; text-align: center;
+            border: 2px solid #ff4d6d; box-shadow: 0 0 40px rgba(255,77,109,0.6);
         }
 
-        @keyframes floating {
-            0%, 100% { transform: translateY(0) rotate(-3deg); }
-            50% { transform: translateY(-30px) rotate(3deg); }
-        }
+        /* العداد */
+        #counter-box { margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 15px; }
+        .time-unit { font-size: 1.4rem; color: #ff8fa3; font-weight: bold; }
 
-        /* مشغل الموسيقى المخفي */
+        @keyframes floating { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-25px); } }
         #player { position: absolute; width: 1px; height: 1px; overflow: hidden; opacity: 0; }
     </style>
 </head>
@@ -75,7 +83,7 @@
 
     <div id="welcome-flower" onclick="hideFlower()">
         <div class="flower">🌹</div>
-        <p style="margin-top: 20px; font-size: 1.2rem; color: #ff4d6d;">دوسي على الوردة يا رودي</p>
+        <p style="margin-top: 20px; font-size: 1.4rem; color: #ff4d6d;">دوسي ع الوردة يا ست البنات</p>
     </div>
 
     <div id="lock-screen">
@@ -85,22 +93,27 @@
 
     <canvas id="canvas"></canvas>
 
-    <div id="balloon-container" onclick="explode()">
+    <div id="main-stage">
         <div class="balloon">Rodina</div>
-        <div style="width: 2px; height: 100px; background: white; margin: 0 auto; opacity: 0.6;"></div>
+        <button class="action-btn" onclick="explode()">دوسي يا كبدي ❤️</button>
     </div>
 
     <div id="letter">
-        <h1 style="color: #ff4d6d; margin:0; font-family: 'Pacifico', cursive;">I Love You ❤️</h1>
-        <p style="font-size: 1.2rem; line-height: 1.6; margin-top: 15px;">
-            أنتِ أجمل صدفة في حياتي، وجودك هو اللي بيخلي كل حاجة حواليا بتلمع. 
-            يا رب نفضل مع بعض دايمًا يا أغلى من عيني.
+        <div id="counter-box">
+            <div style="font-size: 1rem; margin-bottom: 5px;">بقالنا مع بعض بنحب بعض:</div>
+            <div id="love-counter" class="time-unit"></div>
+        </div>
+        <h1 style="color: #ff8fa3; margin:0; font-family: 'Pacifico', cursive;">يا روح قلبـي ❤️</h1>
+        <p style="font-size: 1.1rem; line-height: 1.7; margin-top: 15px;">
+            عارفة الـ 4 شهور دول؟ دول أجمل أيام عشتها في حياتي كلها. 
+            انتي مش بس حبيبتي، انتي عوض ربنا ليا، والضحكة اللي بترد فيا الروح لما بكون تعبان. 
+            كل ثانية جنبك بتبني جوايا عالم من السعادة.. بوعدك أفضل أحبك وأحافظ عليكي لآخر نفس فيا. 
+            يا رب كل سنيننا الجاية نكون سوا يا أغلى من Rodina في الكون.
         </p>
-        <p style="font-weight: bold; color: #ff4d6d;">Happy Valentine, Rodina</p>
+        <p style="font-weight: bold; margin-top: 20px; color: #ff8fa3;">Happy Valentine's Day</p>
     </div>
 
     <script>
-        // تشغيل الموسيقى (رابط رامي صبري - بحبك)
         function playMusic() {
             if(!window.musicPlayed) {
                 document.getElementById('player').innerHTML = `
@@ -127,37 +140,45 @@
                 document.getElementById('lock-screen').style.opacity = '0';
                 setTimeout(() => {
                     document.getElementById('lock-screen').style.display = 'none';
-                    document.getElementById('balloon-container').style.display = 'block';
+                    document.getElementById('main-stage').style.display = 'flex';
                 }, 1000);
             }
         }
 
         function explode() {
-            document.getElementById('balloon-container').style.display = 'none';
-            // انفجار كبير
-            confetti({
-                particleCount: 250,
-                spread: 100,
-                origin: { y: 0.6 },
-                colors: ['#ff4d6d', '#ffffff', '#ff0000']
-            });
-            
+            document.getElementById('main-stage').style.display = 'none';
+            confetti({ particleCount: 300, spread: 120, origin: { y: 0.6 } });
             setTimeout(() => {
                 document.getElementById('letter').style.display = 'block';
-                // مطر قلوب مستمر
+                updateCounter();
+                setInterval(updateCounter, 1000); // تحديث العداد كل ثانية
                 setInterval(() => {
-                    confetti({ particleCount: 40, angle: 60, spread: 55, origin: { x: 0 } });
-                    confetti({ particleCount: 40, angle: 120, spread: 55, origin: { x: 1 } });
+                    confetti({ particleCount: 50, angle: 60, spread: 55, origin: { x: 0 } });
+                    confetti({ particleCount: 50, angle: 120, spread: 55, origin: { x: 1 } });
                 }, 2000);
             }, 500);
         }
 
-        // كود النجوم والقلوب المتساقطة والخافتة
+        // حساب الـ 4 شهور بالظبط (افترضنا البداية من 14 أكتوبر 2025)
+        function updateCounter() {
+            const startDate = new Date('2025-10-14T00:00:00'); // غير التاريخ لو مش مظبوط
+            const now = new Date();
+            const diff = now - startDate;
+
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+            const mins = Math.floor((diff / (1000 * 60)) % 60);
+            const secs = Math.floor((diff / 1000) % 60);
+
+            document.getElementById('love-counter').innerHTML = 
+                `${days} يوم، ${hours} ساعة، ${mins} دقيقة، ${secs} ثانية`;
+        }
+
+        // كود النجوم والقلوب
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
         canvas.width = window.innerWidth; canvas.height = window.innerHeight;
         let particles = [];
-
         class Particle {
             constructor() { this.reset(); }
             reset() {
@@ -166,7 +187,7 @@
                 this.size = Math.random() * 2 + 1;
                 this.opacity = Math.random();
                 this.fade = Math.random() * 0.01 + 0.005;
-                this.type = Math.random() > 0.85 ? 'heart' : 'star';
+                this.type = Math.random() > 0.8 ? 'heart' : 'star';
             }
             draw() {
                 ctx.globalAlpha = this.opacity;
@@ -180,19 +201,13 @@
                 if (this.opacity <= 0) this.reset();
             }
         }
-
         for(let i=0; i<150; i++) particles.push(new Particle());
-
         function animate() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             particles.forEach(p => p.draw());
             requestAnimationFrame(animate);
         }
         animate();
-
-        window.addEventListener('resize', () => {
-            canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-        });
     </script>
 </body>
 </html>
